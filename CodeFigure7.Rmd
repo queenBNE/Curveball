@@ -1,0 +1,79 @@
+Code for Figure 7 in `Proof of uniform sampling of binary matrices with fixed row sums and column sums for fast Curveball algorithm'
+==============================================================================
+
+```{r}
+basedir <- '~/Git/Github/Curveball/'
+setwd(basedir)
+source('binaryMatrices.R')
+source('curveball.R')
+source('goodshuffle.R')
+source('perturbation.R')
+
+library('igraph')
+library('RColorBrewer')
+cols = RColorBrewer::brewer.pal(8,'Dark2')
+```
+
+Compare different runs for curveball and good shuffle curveball
+```{r}
+matrices <- list()
+perturbation.scores.curveball <- list()
+perturbation.scores.goodshuffle <- list()
+times.curveball <- list()
+times.goodshuffle <- list()
+
+idx = 1
+sizes = c(10) #, 100) 
+for(i in 1:length(sizes)){
+  r = c = sizes[i]
+  N = 1000
+  S = 100
+  ps = seq(0.1,0.5,0.1)
+  for(j in 1:length(ps)){
+    p = ps[j]
+    M <- generateRandomBinaryMatrix(r,c,p=p)
+    perturbation.curveball <- list()
+    perturbation.goodshuffle <- list()
+    t.curveball = mat.or.vec(nr=1, nc=S)
+    t.goodshuffle = mat.or.vec(nr=1, nc=S)
+    for(k in 1:S){  
+      t.curveball[k] = system.time(
+        perturbation.curveball[[k]] <- perturbation.scores(M,N,curveball.trade))[1]
+      t.goodshuffle[k] = system.time(
+        perturbation.goodshuffle[[k]] <- perturbation.scores(M,N,goodshuffle.trade))[1]
+    }
+  
+    
+    # Compute and plot the average perturbation of matrices in 100 Markov chains from the initial 
+    # matrix M for both the Curveball and Good-Shuffle Curveball algorithm 
+    
+    perturbation.scores.curveball[[idx]] = colMeans(do.call(rbind,perturbation.curveball))
+    plot(1:N, perturbation.scores.curveball[[idx]], 'l', col=cols[1], main=paste('Average Both, p =', p)) 
+    perturbation.scores.goodshuffle[[idx]] = colMeans(do.call(rbind, perturbation.goodshuffle))
+    lines(1:N, perturbation.scores.goodshuffle[[idx]], col=cols[3])
+    
+    print(paste("Mean time for curveball 1000 pair extractions: ", mean(t.curveball)))
+    print(paste("Mean time for good-shuffle curveball 1000 pair extractions: ", mean(t.goodshuffle)))
+    
+    
+    matrices[[idx]] = M
+    times.curveball[[idx]] <- times.curveball
+    times.goodshuffle[[idx]] <- times.goodshuffle
+    idx = idx + 1
+  } 
+}
+```
+
+
+
+```{r Complete Figure}
+save(matrices, times.curveball, times.goodshuffle, perturbation.scores.curveball, perturbation.scores.goodshuffle, file=paste("resultsCodeFigure7", date(), ".R", sep=""))
+
+plot(-10, -10, main="Curveball", xlim =c(0,N), ylim=c(0,0.8), xlab="Steps", ylab="Perturbation Score")
+for(i in 1:5)
+  lines(1:N, perturbation.scores.curveball[[i]], col=cols[i])
+
+plot(-10, -10, main="Good-Shuffle", xlim =c(0,N), ylim=c(0,0.8), xlab="Steps", ylab="Perturbation Score")
+for(i in 1:5)
+  lines(1:N, perturbation.scores.goodshuffle[[i]], col=cols[i])
+```

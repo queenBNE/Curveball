@@ -1,0 +1,72 @@
+Code for Table I in `Proof of uniform sampling of binary matrices with fixed row sums and column sums for fast Curveball algorithm'
+==============================================================================
+Load methods 
+```{r Loading methods}
+basedir <- '~/Git/Github/Curveball/'
+library('igraph')
+setwd(basedir)
+source('binaryMatrices.R')
+source('curveball.R')
+source('goodshuffle.R')
+source('mixingtime.R')
+```
+
+Setup variables for speed calculations 
+```{r Setup vars}
+eps = 0.000001 
+attempts = 10000
+```
+
+
+```{r Setup experiment function}
+runtimeExperiment <- function(A){
+  print(A)
+  if(sum(A) > 1){
+    states = getAllBinaryMatricesWithRowAndColSums(A, max=1000, prnt=F)
+    stateCount = length(states)
+    if(stateCount > 1){
+      cat(paste("State count:", stateCount, "\n"))
+      cat("\n")
+      
+      runtime.cb = curveball.getRuntime(A, states, eps, attempts)
+      runtime.gs = goodshuffle.getRuntime(A, states, eps, attempts)
+      results = data.frame(method=c('Curveball', 'Good-Shuffle'), 
+                           N=c(runtime.cb[1], runtime.gs[1]), 
+                           t=c(runtime.cb[2], runtime.gs[2]))
+      results = cbind.data.frame(results, total=results$N*results$t)
+      print(results)  
+    }else{
+      cat("Trivial state graph, single state \n")
+    }
+  }
+}
+```
+
+
+```{r Generating state graph 3x3}
+n = 3
+for(m in 2:5){
+  A = generateRandomBinaryMatrix(n, n, m)
+  runtimeExperiment(A)
+}
+```
+
+```{r Generating state graph 4x4}
+n = 4
+for(m in 3:8){
+  A = generateRandomBinaryMatrix(n, n, m)
+  runtimeExperiment(A)
+}
+```
+
+```{r Generating state graph 5x5}
+n = 5
+for(m in 8:11){
+  A = generateRandomBinaryMatrix(n, n, m)
+  runtimeExperiment(A)
+}
+```
+
+
+
+
