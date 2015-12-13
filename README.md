@@ -1,8 +1,4 @@
 # Curveball
+This GitHub repository contains code to reproduce the results presented in ['Proof of uniform sampling of binary matrices with fixed row sums and column sums for the fast Curveball algorithm'](http://journals.aps.org/pre/abstract/10.1103/PhysRevE.91.042812). 
 
-This repository contains an implementation of the Curveball algorithm as defined in 
-['A fast and unbiased procedure to randomize ecological binary matrices with fixed row and column totals'](http://www.nature.com/ncomms/2014/140611/ncomms5114/abs/ncomms5114.html). 
-
-It also contains the implementation of the Good-Shuffle Curveball algorithm as defined in a forthcoming publication. 
-
-More code coming soon!
+In particular it contains an implementation of the original Curveball algorithm (see ['A fast and unbiased procedure to randomize ecological binary matrices with fixed row and column totals'](http://www.nature.com/ncomms/2014/140611/ncomms5114/abs/ncomms5114.html)) and the Good Shuffle algorithm. Furthermore, it contains implementations of the Simple Curveball algorithm, the Simple Undirected Curveball algorithm and two additional Curveball style algorithms that will be discussed in a forthcoming paper. 

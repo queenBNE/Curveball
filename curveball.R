@@ -5,11 +5,19 @@ curveball.run <- function(A, N){
   R = dim(A)[1]
   C = dim(A)[2]
   hp = curveball.step.a(A)
-  for (rep in 1:steps){
+  for (rep in 1:N){
     hp = curveball.step.bcd(hp)
   }
   A = curveball.step.f(hp, R, C)
   return(A)
+}
+
+# Run the curveball algorithm for incidence lists I, repeating step b-d N times 
+curveball.run <- function(I, N){
+  for (rep in 1:N){
+    I = curveball.step.bcd(I)
+  }
+  return(I)
 }
 
 # Perfrom one trade in the curveball algorithm 
